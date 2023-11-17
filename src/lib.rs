@@ -43,9 +43,9 @@ fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String
                 formatted_message += &SetAttribute(*attribute).to_string();
             }
             formatted_message.push_str(line);
-            if i < lines.len() - 1 || message.ends_with('\n') {
+            if (i < lines.len() - 1) || (message.ends_with('\n') && i == lines.len() - 1) {
                 formatted_message += &ResetColor.to_string();
-//                formatted_message.push('\n');
+                formatted_message.push('\n');
             }
         }
     }

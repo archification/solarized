@@ -43,7 +43,7 @@ fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String
                 formatted_message += &SetAttribute(*attribute).to_string();
             }
             formatted_message.push_str(line);
-            if i < lines.len() - 1 || message.ends_with('\n') {
+            if i < lines.len() - 1 || (i == lines.len() - 1 && message.ends_with('\n')) {
                 formatted_message += &ResetColor.to_string();
                 formatted_message.push('\n');
             }
@@ -57,17 +57,21 @@ fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String
 fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
     let mut formatted_message = String::new();
     for (message, color, attributes) in message_fragments {
-        for line in message.split("\n") {
+        let lines: Vec<&str> = message.split('\n').collect();
+        for (i, line) in lines.iter().enumerate() {
             formatted_message += &SetBackgroundColor(BACK).to_string();
             formatted_message += &SetForegroundColor(*color).to_string();
             for attribute in attributes {
                 formatted_message += &SetAttribute(*attribute).to_string();
             }
             formatted_message.push_str(line);
-            formatted_message += &SetBackgroundColor(Color::Reset).to_string();
-            formatted_message.push('\n');
+            if i < lines.len() - 1 || message.ends_with('\n') {
+                formatted_message += &ResetColor.to_string();
+                formatted_message.push('\n');
+            }
         }
     }
+    formatted_message += &ResetColor.to_string();
     formatted_message
 }
 */

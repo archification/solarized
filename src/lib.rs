@@ -35,29 +35,35 @@ pub enum PrintMode {
 fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
     let mut formatted_message = String::new();
     for (message, color, attributes) in message_fragments {
-        let mut start_of_line = true;
-        for ch in message.chars() {
-            if start_of_line {
-                formatted_message += &SetBackgroundColor(BACK).to_string();
-                formatted_message += &SetForegroundColor(*color).to_string();
-                for attribute in attributes {
-                    formatted_message += &SetAttribute(*attribute).to_string();
-                }
-                start_of_line = false;
+        for line in message.split("\n") {
+            formatted_message += &SetBackgroundColor(BACK).to_string();
+            formatted_message += &SetForegroundColor(*color).to_string();
+            for attribute in attributes {
+                formatted_message += &SetAttribute(*attribute).to_string();
             }
-            formatted_message.push(ch);
-            if ch == '\n' {
-                formatted_message += &ResetColor.to_string();
-                start_of_line = true;
-            }
+            formatted_message.push_str(line);
+            formatted_message += &SetBackgroundColor(Color::Reset).to_string();
+            formatted_message.push('\n');
         }
-        if !message.ends_with('\n') {
-            formatted_message.push('\n');  // Ensure newline at end if not present
-        }
-        formatted_message += &ResetColor.to_string(); // Ensure reset at end of each fragment
     }
     formatted_message
 }
+
+/*
+fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
+    let mut formatted_message = String::new();
+    for (message, color, attributes) in message_fragments {
+        formatted_message += &SetBackgroundColor(BACK).to_string();
+        formatted_message += &SetForegroundColor(*color).to_string();
+        for attribute in attributes {
+            formatted_message += &SetAttribute(*attribute).to_string();
+        }
+        formatted_message.push_str(message);
+        formatted_message += &SetAttribute(Attribute::Reset).to_string();
+    }
+    formatted_message
+}
+*/
 
 fn print_formatted(message_fragments: &[(&str, Color, Vec<Attribute>)], mode: PrintMode) {
     let formatted_message = format_message(message_fragments);

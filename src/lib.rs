@@ -35,22 +35,26 @@ pub enum PrintMode {
 fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
     let mut formatted_message = String::new();
     for (message, color, attributes) in message_fragments {
-        let lines: Vec<&str> = message.split('\n').collect();
-        for (i, line) in lines.iter().enumerate() {
-            formatted_message += &SetBackgroundColor(BACK).to_string();
-            formatted_message += &SetForegroundColor(*color).to_string();
-            for attribute in attributes {
-                formatted_message += &SetAttribute(*attribute).to_string();
+        let mut start_of_line = true;
+        for ch in message.chars() {
+            if start_of_line {
+                formatted_message += &SetBackgroundColor(BACK).to_string();
+                formatted_message += &SetForegroundColor(*color).to_string();
+                for attribute in attributes {
+                    formatted_message += &SetAttribute(*attribute).to_string();
+                }
+                start_of_line = false;
             }
-            formatted_message.push_str(line);
-            formatted_message += &ResetColor.to_string();
-            if i < lines.len() - 1 {
-                formatted_message.push('\n');
+            formatted_message.push(ch);
+            if ch == '\n' {
+                formatted_message += &ResetColor.to_string();
+                start_of_line = true;
             }
         }
         if !message.ends_with('\n') {
-            formatted_message.push('\n');
+            formatted_message.push('\n');  // Ensure newline at end if not present
         }
+        formatted_message += &ResetColor.to_string(); // Ensure reset at end of each fragment
     }
     formatted_message
 }

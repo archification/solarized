@@ -35,6 +35,28 @@ pub enum PrintMode {
 fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
     let mut formatted_message = String::new();
     for (message, color, attributes) in message_fragments {
+        let lines: Vec<&str> = message.split('\n').collect();
+        for (i, line) in lines.iter().enumerate() {
+            formatted_message += &SetBackgroundColor(BACK).to_string();
+            formatted_message += &SetForegroundColor(*color).to_string();
+            for attribute in attributes {
+                formatted_message += &SetAttribute(*attribute).to_string();
+            }
+            formatted_message.push_str(line);
+            if i < lines.len() - 1 || message.ends_with('\n') {
+                formatted_message += &ResetColor.to_string();
+                formatted_message.push('\n');
+            }
+        }
+    }
+    formatted_message += &ResetColor.to_string();
+    formatted_message
+}
+
+/*
+fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
+    let mut formatted_message = String::new();
+    for (message, color, attributes) in message_fragments {
         for line in message.split("\n") {
             formatted_message += &SetBackgroundColor(BACK).to_string();
             formatted_message += &SetForegroundColor(*color).to_string();
@@ -48,6 +70,7 @@ fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String
     }
     formatted_message
 }
+*/
 
 fn print_formatted(message_fragments: &[(&str, Color, Vec<Attribute>)], mode: PrintMode) {
     let formatted_message = format_message(message_fragments);

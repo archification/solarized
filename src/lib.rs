@@ -35,13 +35,16 @@ pub enum PrintMode {
 fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
     let mut formatted_message = String::new();
     for (message, color, attributes) in message_fragments {
-        formatted_message += &SetBackgroundColor(BACK).to_string();
-        formatted_message += &SetForegroundColor(*color).to_string();
-        for attribute in attributes {
-            formatted_message += &SetAttribute(*attribute).to_string();
+        for line in message.split("\n") {
+            formatted_message += &SetBackgroundColor(BACK).to_string();
+            formatted_message += &SetForegroundColor(*color).to_string();
+            for attribute in attributes {
+                formatted_message += &SetAttribute(*attribute).to_string();
+            }
+            formatted_message.push_str(line);
+            formatted_message += &SetBackgroundColor(Color::Reset).to_string();
+            formatted_message.push('\n');
         }
-        formatted_message.push_str(message);
-        formatted_message += &SetAttribute(Attribute::Reset).to_string();
     }
     formatted_message
 }
@@ -74,16 +77,3 @@ pub fn clear() {
         .execute(Clear(ClearType::All)).unwrap()
         .execute(cursor::MoveTo(0, 0)).unwrap();
 }
-
-/*
-print_colored(
-    &["Hello", "World"],
-    &[Color::Red, Color::Blue],
-    PrintMode::SameLine
-);
-
-print_fancy(&[
-    ("Hello", Color::Red, vec![BOLD]),
-    ("World", Color::Blue, vec![])
-], PrintMode::NewLine);
-*/

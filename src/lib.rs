@@ -32,25 +32,6 @@ pub enum PrintMode {
     SameLine,
 }
 
-/*
-fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
-    let mut formatted_message = String::new();
-    for (message, color, attributes) in message_fragments {
-        for line in message.split("\n") {
-            formatted_message += &SetBackgroundColor(BACK).to_string();
-            formatted_message += &SetForegroundColor(*color).to_string();
-            for attribute in attributes {
-                formatted_message += &SetAttribute(*attribute).to_string();
-            }
-            formatted_message.push_str(line);
-            formatted_message += &SetBackgroundColor(Color::Reset).to_string();
-            formatted_message.push('\n');
-        }
-    }
-    formatted_message
-}
-*/
-
 fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
     let mut formatted_message = String::new();
     for (message, color, attributes) in message_fragments {
@@ -69,10 +50,22 @@ fn print_formatted(message_fragments: &[(&str, Color, Vec<Attribute>)], mode: Pr
     let formatted_message = format_message(message_fragments);
     match mode {
         PrintMode::NewLine => {
-            println!("{}{}{}", SetBackgroundColor(BACK), formatted_message, ResetColor);
+            println!(
+                "{}{}{}{}",
+                SetBackgroundColor(BACK),
+                formatted_message,
+                ResetColor,
+                SetBackgroundColor(Color::Reset)
+            );
         },
         PrintMode::SameLine => {
-            print!("{}{}{}", SetBackgroundColor(BACK), formatted_message, ResetColor);
+            print!(
+                "{}{}{}{}",
+                SetBackgroundColor(BACK),
+                formatted_message,
+                ResetColor,
+                SetBackgroundColor(Color::Reset)
+            );
         },
     }
 }

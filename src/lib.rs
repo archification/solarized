@@ -32,6 +32,7 @@ pub enum PrintMode {
     SameLine,
 }
 
+/*
 fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
     let mut formatted_message = String::new();
     for (message, color, attributes) in message_fragments {
@@ -48,8 +49,8 @@ fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String
     }
     formatted_message
 }
+*/
 
-/*
 fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
     let mut formatted_message = String::new();
     for (message, color, attributes) in message_fragments {
@@ -63,7 +64,6 @@ fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String
     }
     formatted_message
 }
-*/
 
 fn print_formatted(message_fragments: &[(&str, Color, Vec<Attribute>)], mode: PrintMode) {
     let formatted_message = format_message(message_fragments);

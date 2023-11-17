@@ -35,15 +35,15 @@ pub enum PrintMode {
 fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
     let mut formatted_message = String::new();
     for (message, color, attributes) in message_fragments {
-        let lines: Vec<&str> = message.split('\n').collect();
-        for (i, line) in lines.iter().enumerate() {
+        let lines = message.split_inclusive('\n');
+        for line in lines {
             formatted_message += &SetBackgroundColor(BACK).to_string();
             formatted_message += &SetForegroundColor(*color).to_string();
             for attribute in attributes {
                 formatted_message += &SetAttribute(*attribute).to_string();
             }
             formatted_message.push_str(line);
-            if (i < lines.len() - 1) || (message.ends_with('\n') && i == lines.len() - 1) {
+            if !line.ends_with('\n') {
                 formatted_message += &ResetColor.to_string();
                 formatted_message.push('\n');
             }

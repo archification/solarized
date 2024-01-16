@@ -52,22 +52,6 @@ fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String
     formatted_message
 }
 
-/*
-fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
-    let mut formatted_message = String::new();
-    for (message, color, attributes) in message_fragments {
-        formatted_message += &SetBackgroundColor(BACK).to_string();
-        formatted_message += &SetForegroundColor(*color).to_string();
-        for attribute in attributes {
-            formatted_message += &SetAttribute(*attribute).to_string();
-        }
-        formatted_message.push_str(message);
-        formatted_message += &SetAttribute(Attribute::Reset).to_string();
-    }
-    formatted_message
-}
-*/
-
 fn print_formatted(message_fragments: &[(&str, Color, Vec<Attribute>)], mode: PrintMode) {
     let formatted_message = format_message(message_fragments);
     match mode {

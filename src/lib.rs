@@ -10,6 +10,7 @@ use crossterm::{
         ClearType
     }
 };
+use rand::{Rng, thread_rng};
 use std::io::stdout;
 
 pub const BACK: Color = Color::Rgb { r:7, g:54, b:66 };
@@ -89,4 +90,43 @@ pub fn clear() {
     stdout()
         .execute(Clear(ClearType::All)).unwrap()
         .execute(cursor::MoveTo(0, 0)).unwrap();
+}
+
+fn random_color() -> Color {
+    let mut rng = thread_rng();
+    Color::Rgb {
+        r: rng.gen_range(0..255),
+        g: rng.gen_range(0..255),
+        b: rng.gen_range(0..255),
+    }
+}
+
+pub fn print_random_colored(message: &str, mode: PrintMode) {
+    let mut formatted_message = String::new();
+    for ch in message.chars() {
+        let fg = random_color();
+        let bg = random_color();
+        formatted_message += &SetBackgroundColor(bg).to_string();
+        formatted_message += &SetForegroundColor(fg).to_string();
+        formatted_message.push(ch);
+        formatted_message += &ResetColor.to_string();
+    }
+    match mode {
+        PrintMode::NewLine => {
+            println!(
+                "{}{}{}",
+                SetBackgroundColor(BACK),
+                formatted_message,
+                ResetColor,
+            );
+        },
+        PrintMode::SameLine => {
+            print!(
+                "{}{}{}",
+                SetBackgroundColor(BACK),
+                formatted_message,
+                ResetColor,
+            );
+        },
+    }
 }

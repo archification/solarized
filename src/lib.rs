@@ -130,3 +130,45 @@ pub fn print_random_colored(message: &str, mode: PrintMode) {
         },
     }
 }
+
+fn next_color(color: Color) -> Color {
+    let step = 10;
+    if let Color::Rgb { r, g, b } = color {
+        let new_r = (r as u8).wrapping_add(step) % 255;
+        let new_g = (g as u8).wrapping_add(step) % 255;
+        let new_b = (b as u8).wrapping_add(step) % 255;
+        Color::Rgb { r: new_r, g: new_g, b: new_b }
+    } else {
+        color
+    }
+}
+
+pub fn print_hypno_colored(message: &str, mode: PrintMode) {
+    let mut formatted_message = String::new();
+    let mut fg = random_color();
+    let mut bg = random_color();
+    for (i, ch) in message.chars().enumerate() {
+        if i % 5 == 0 {
+            fg = next_color(fg);
+            bg = next_color(bg);
+        }
+        formatted_message += &SetBackgroundColor(bg).to_string();
+        formatted_message += &SetForegroundColor(fg).to_string();
+        formatted_message.push(ch);
+        formatted_message += &ResetColor.to_string();
+    }
+    match mode {
+        PrintMode::NewLine => {
+            println!(
+                "{}",
+                formatted_message,
+            );
+        },
+        PrintMode::SameLine => {
+            print!(
+                "{}",
+                formatted_message,
+            );
+        },
+    }
+}

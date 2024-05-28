@@ -130,3 +130,34 @@ pub fn print_random_colored(message: &str, mode: PrintMode) {
         },
     }
 }
+
+pub fn print_colorized_table(headers: &[(&str, Color)], rows: &[Vec<(&str, Color)>], border_color: Color) {
+    let mut top_border = SetForegroundColor(border_color).to_string();
+    for (header, _) in headers {
+        top_border += &format!("+{:-<1$}", "", header.len() + 2);
+    }
+    top_border += "+";
+    println!("{}{}", top_border, ResetColor);
+    let mut header_row = SetForegroundColor(border_color).to_string();
+    for (header, color) in headers {
+        header_row += &format!("| {} ", SetForegroundColor(*color));
+        header_row += header;
+        header_row += &format!(" {}", ResetColor);
+    }
+    header_row += "|";
+    println!("{}", header_row);
+    for row in rows {
+        let mut row_string = SetForegroundColor(border_color).to_string();
+        for (i, (text, color)) in row.iter().enumerate() {
+            row_string += &format!("| {} ", SetForegroundColor(*color));
+            row_string += text;
+            row_string += &format!(" {}", ResetColor);
+            let extra_spaces = headers[i].0.len() + 2 - text.len();
+            let padding: String = std::iter::repeat(" ").take(extra_spaces).collect();
+            row_string += &padding;
+        }
+        row_string += "|";
+        println!("{}", row_string);
+    }
+    println!("{}", top_border);
+}

@@ -148,7 +148,7 @@ pub fn print_hypno_colored(message: &str, mode: PrintMode) {
     let mut fg = random_color();
     let mut bg = random_color();
     for (i, ch) in message.chars().enumerate() {
-        if i % 5 == 0 {
+        if i % 1 == 0 {
             fg = next_color(fg);
             bg = next_color(bg);
         }

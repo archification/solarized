@@ -11,6 +11,7 @@ use crossterm::{
     }
 };
 use rand::{Rng, thread_rng};
+use std::env;
 use std::io::stdout;
 
 pub const BACK: Color = Color::Rgb { r:7, g:54, b:66 };
@@ -27,6 +28,94 @@ pub const GREY: Color = Color::Rgb { r:88, g:110, b:117 };
 pub const BOLD: Attribute = Attribute::Bold;
 pub const UNDERLINED: Attribute = Attribute::Underlined;
 pub const ITALIC: Attribute = Attribute::Italic;
+
+pub struct Argument {
+    pub name: String,
+    pub short: Option<String>,
+    pub long: String,
+    pub help: String,
+    pub takes_value: bool,
+}
+
+pub struct ArgumentParser {
+    args: Vec<Argument>,
+}
+
+impl ArgumentParser {
+    pub fn new() -> Self {
+        ArgumentParser { args: vec![] }
+    }
+
+    pub fn add_argument(&mut self, arg: Argument) {
+        self.args.push(arg);
+    }
+
+    pub fn parse(&self) -> Result<ParseResult, ParseError> {
+        let args: Vec<String> = env::args().collect();
+        let mut parse_result = ParseResult::new();
+
+        let mut i = 1;
+        while i < args.len() {
+            let arg = self.args.iter().find(|arg| arg.long == args[i] || arg.short.as_ref().map_or(false, |short| *short == args[i]));
+            match arg {
+                Some(arg) => {
+                    if arg.takes_value {
+                        if i + 1 < args.len() {
+                            parse_result.add_value(arg.name.clone(), args[i + 1].clone());
+                            i += 1;
+                        } else {
+                            return Err(ParseError::MissingValue(arg.name.clone()));
+                        }
+                    } else {
+                        parse_result.add_flag(arg.name.clone());
+                    }
+                }
+                None => {
+                    return Err(ParseError::UnknownArgument(args[i].clone()));
+                }
+            }
+            i += 1;
+        }
+
+        Ok(parse_result)
+    }
+}
+
+pub struct ParseResult {
+    values: std::collections::HashMap<String, String>,
+    flags: std::collections::HashSet<String>,
+}
+
+impl ParseResult {
+    fn new() -> Self {
+        ParseResult {
+            values: std::collections::HashMap::new(),
+            flags: std::collections::HashSet::new(),
+        }
+    }
+
+    fn add_value(&mut self, name: String, value: String) {
+        self.values.insert(name, value);
+    }
+
+    fn add_flag(&mut self, name: String) {
+        self.flags.insert(name);
+    }
+
+    pub fn get_value(&self, name: &str) -> Option<&str> {
+        self.values.get(name).map(|s| s.as_str())
+    }
+
+    pub fn has_flag(&self, name: &str) -> bool {
+        self.flags.contains(name)
+    }
+}
+
+#[derive(Debug)]
+pub enum ParseError {
+    MissingValue(String),
+    UnknownArgument(String),
+}
 
 pub enum PrintMode {
     NewLine,
@@ -172,3 +261,5 @@ pub fn print_hypno_colored(message: &str, mode: PrintMode) {
         },
     }
 }
+
+

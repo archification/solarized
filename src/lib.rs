@@ -31,13 +31,12 @@ macro_rules! format_solarized {
                 solarized::WHITE => (147, 161, 161),
             };
 
-            let style = vec![$(solarized::Style::$style),*].iter().map(|style| match style {
-                solarized::Style::Bold => "font-weight: bold;",
-                solarized::Style::Underlined => "text-decoration: underline;",
-                solarized::Style::Italic => "font-style: italic;",
-            }).collect::<String>();
-
-            let style = vec![$(format!("{}: {};", stringify!($style).to_lowercase(), "true")),*].join("");
+            let style = vec![$(match stringify!($style).as_str() {
+                "BOLD" => "font-weight: bold;",
+                "UNDERLINED" => "text-decoration: underline;",
+                "ITALIC" => "font-style: italic;",
+                _ => ""
+            }),*].join("");
             result.push_str(&format!("<span style=\"color: rgb({}, {}, {}); {}\">{}</span>", rgb.0, rgb.1, rgb.2, style, $text));
         )*
         result

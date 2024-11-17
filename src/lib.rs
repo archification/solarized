@@ -122,7 +122,7 @@ pub enum PrintMode {
     SameLine,
 }
 
-fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
+pub fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
     let mut formatted_message = String::new();
     for (message, color, attributes) in message_fragments {
         let lines: Vec<&str> = message.split('\n').collect();

@@ -37,6 +37,7 @@ macro_rules! format_solarized {
                 solarized::Style::Italic => "font-style: italic;",
             }).collect::<String>();
 
+            let style = vec![$(format!("{}: {};", stringify!($style).to_lowercase(), "true")),*].join("");
             result.push_str(&format!("<span style=\"color: rgb({}, {}, {}); {}\">{}</span>", rgb.0, rgb.1, rgb.2, style, $text));
         )*
         result

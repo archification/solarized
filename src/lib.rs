@@ -122,7 +122,7 @@ pub enum PrintMode {
     SameLine,
 }
 
-pub fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
+fn format_message(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
     let mut formatted_message = String::new();
     for (message, color, attributes) in message_fragments {
         let lines: Vec<&str> = message.split('\n').collect();
@@ -262,4 +262,6 @@ pub fn print_hypno_colored(message: &str, mode: PrintMode) {
     }
 }
 
-
+pub fn format_fancy(message_fragments: &[(&str, Color, Vec<Attribute>)]) -> String {
+    format!("{}{}{}", SetBackgroundColor(BACK), format_message(message_fragments), ResetColor)
+}

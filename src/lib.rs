@@ -31,7 +31,7 @@ macro_rules! format_solarized {
                 solarized::WHITE => (147, 161, 161),
             };
 
-            let style = vec![$(match stringify!($style).as_str() {
+            let style = vec![$(match stringify!($style) {
                 "BOLD" => "font-weight: bold;",
                 "UNDERLINED" => "text-decoration: underline;",
                 "ITALIC" => "font-style: italic;",

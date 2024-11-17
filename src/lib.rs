@@ -14,6 +14,35 @@ use rand::{Rng, thread_rng};
 use std::env;
 use std::io::stdout;
 
+#[macro_export]
+macro_rules! format_solarized {
+    ($($text:expr, $color:ident, $($style:ident),*);*) => {{
+        let mut result = String::new();
+        $(
+            let rgb = match solarized::$color {
+                solarized::VIOLET => (108, 113, 196),
+                solarized::BLUE => (38, 139, 210),
+                solarized::CYAN => (42, 161, 152),
+                solarized::GREEN => (133, 153, 0),
+                solarized::YELLOW => (181, 137, 0),
+                solarized::ORANGE => (203, 75, 22),
+                solarized::RED => (211, 1, 2),
+                solarized::MAGENTA => (211, 54, 130),
+                solarized::WHITE => (147, 161, 161),
+            };
+
+            let style = vec![$(solarized::Style::$style),*].iter().map(|style| match style {
+                solarized::Style::Bold => "font-weight: bold;",
+                solarized::Style::Underlined => "text-decoration: underline;",
+                solarized::Style::Italic => "font-style: italic;",
+            }).collect::<String>();
+
+            result.push_str(&format!("<span style=\"color: rgb({}, {}, {}); {}\">{}</span>", rgb.0, rgb.1, rgb.2, style, $text));
+        )*
+        result
+    }};
+}
+
 pub const BACK: Color = Color::Rgb { r:7, g:54, b:66 };
 pub const VIOLET: Color = Color::Rgb { r:108, g:113, b:196 };
 pub const BLUE: Color = Color::Rgb { r:38, g:139, b:210 };

@@ -1,8 +1,8 @@
-use crossterm::style::{
+use ratatui::crossterm::style::{
     SetBackgroundColor, SetForegroundColor, ResetColor, Color,
     Attribute, SetAttribute,
 };
-use crossterm::{
+use ratatui::crossterm::{
     ExecutableCommand,
     cursor,
     terminal::{
